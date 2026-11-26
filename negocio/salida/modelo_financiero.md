@@ -24,12 +24,12 @@ Generado por `python -m negocio.modelo_financiero`. Etiquetas: **MEDIDO** (sale 
 | Margen de contribución por comunidad | 18.90 € (99.5%) | CALCULADO | sin contar la GPU como fijo |
 | Costes fijos al mes (sin GPU) | 600 € | ESTIMACIÓN |  |
 | Punto de equilibrio | 61 comunidades | CALCULADO | (fijos + 1 GPU) / margen de contribución |
-| Coste de construcción con Claude Code (Opus 5.5) | 16.70 € | MEDIDO | logs/coste_construccion.json |
-| Inversión antes del primer euro de ingreso | 3,017 € | CALCULADO | construcción + legal/marca/piloto (estimación) |
+| Coste de construcción con Claude Code (Opus 5.5) | 20.76 € | MEDIDO | logs/coste_construccion.json |
+| Inversión antes del primer euro de ingreso | 3,021 € | CALCULADO | construcción + legal/marca/piloto (estimación) |
 | Mes con beneficio mensual positivo | 10 | CALCULADO |  |
 | Mes en que se recupera la inversión (caja ≥ 0) | 20 | CALCULADO |  |
-| Necesidad máxima de caja (lo que hay que poner) | 10,778 € | CALCULADO |  |
-| Caja acumulada a 36 meses | 48,460 € | CALCULADO |  |
+| Necesidad máxima de caja (lo que hay que poner) | 10,782 € | CALCULADO |  |
+| Caja acumulada a 36 meses | 48,455 € | CALCULADO |  |
 | ROI a 3 años sobre el capital necesario | 4.5x | CALCULADO | caja final / necesidad máxima de caja |
 | Si la GPU sube un 50 %: punto de equilibrio | 76 comunidades | CALCULADO | factura GPU 821 €/mes |
 

@@ -2,25 +2,25 @@
  "fuente": [
   "/root/.claude/projects"
  ],
- "respuestas": 170,
+ "respuestas": 198,
  "sesiones": 1,
  "tokens": {
-  "input_tokens": 400,
-  "output_tokens": 211246,
-  "cache_creation_input_tokens": 860125,
-  "cache_read_input_tokens": 48104560
+  "input_tokens": 456,
+  "output_tokens": 266663,
+  "cache_creation_input_tokens": 983115,
+  "cache_read_input_tokens": 61547009
  },
  "por_modelo": {
   "claude-opus-5-5": {
-   "input_tokens": 400,
-   "output_tokens": 211246,
-   "cache_creation_input_tokens": 860125,
-   "cache_read_input_tokens": 48104560
+   "input_tokens": 456,
+   "output_tokens": 266663,
+   "cache_creation_input_tokens": 983115,
+   "cache_read_input_tokens": 61547009
   }
  },
  "coste": {
-  "usd": 18.15,
-  "eur": 16.7
+  "usd": 22.56,
+  "eur": 20.76
  },
  "precios_usd_mtok": {
   "entrada": 4.0,
@@ -28,5 +28,5 @@
   "cache_escritura": 5.0,
   "cache_lectura": 0.2
  },
- "fraccion_cacheada_entrada": 0.982
+ "fraccion_cacheada_entrada": 0.984
 }
