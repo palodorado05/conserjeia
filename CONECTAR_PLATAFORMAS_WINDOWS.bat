@@ -8,9 +8,21 @@ cd /d "%~dp0"
 echo.
 echo  === Conserje IA: conectar las 3 plataformas ===
 echo.
+REM ---- 0. Fichero .env con las llaves ----
+if not exist .env if exist .env.txt ren .env.txt .env
 if not exist .env (
-    echo Falta el fichero .env con las llaves. Crealo primero - ver instrucciones.
-    pause & exit /b 1
+    copy /y .env.example .env >nul
+    echo Se va a abrir el Bloc de notas con el fichero de llaves.
+    echo Rellena detras de cada = tus llaves, pulsa Ctrl+G para guardar y CIERRA el Bloc de notas.
+    echo.
+    pause
+    notepad .env
+)
+findstr /R /C:"^NOTION_TOKEN=..*" .env >nul || (
+    echo Falta NOTION_TOKEN en el fichero .env - vuelve a ejecutar y rellenalo.
+    notepad .env
+    pause
+    exit /b 1
 )
 
 REM ---- 1. Herramientas que usan los servidores MCP ----
