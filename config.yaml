@@ -78,6 +78,9 @@ mcp:
         GOOGLE_OAUTH_CLIENT_ID: "${GOOGLE_OAUTH_CLIENT_ID}"
         GOOGLE_OAUTH_CLIENT_SECRET: "${GOOGLE_OAUTH_CLIENT_SECRET}"
         OAUTHLIB_INSECURE_TRANSPORT: "1"
+        # puerto del "retorno" de Google tras aceptar permisos. No usamos el 8000 por defecto porque
+        # en muchos portátiles ya lo ocupa otro programa (y es el de la propia app web).
+        WORKSPACE_MCP_PORT: "8766"
     notion:                       # Notion (base de datos "Incidencias")
       comando: "npx"
       args: ["-y", "@notionhq/notion-mcp-server"]
