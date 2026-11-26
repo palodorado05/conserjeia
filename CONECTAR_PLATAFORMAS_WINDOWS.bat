@@ -9,7 +9,7 @@ echo.
 echo  === Conserje IA: conectar las 3 plataformas ===
 echo.
 if not exist .env (
-    echo Falta el fichero .env con las llaves. Crealo primero (ver instrucciones).
+    echo Falta el fichero .env con las llaves. Crealo primero - ver instrucciones.
     pause & exit /b 1
 )
 
@@ -53,7 +53,7 @@ call npx -y @softeria/ms-365-mcp-server --login
 
 REM ---- 5. Listar las herramientas reales de cada servidor ----
 echo.
-echo [5/6] Comprobando los 3 servidores (puede tardar 1-2 minutos)...
+echo [5/6] Comprobando los 3 servidores - puede tardar 1-2 minutos...
 python -m app.tools.mcp_backend --listar > logs\herramientas_mcp.txt 2>&1
 type logs\herramientas_mcp.txt
 
@@ -63,5 +63,5 @@ echo [6/6] Probando a leer de las 3 plataformas...
 python -m app.tools.mcp_backend --probar >> logs\herramientas_mcp.txt 2>&1
 type logs\herramientas_mcp.txt | findstr /B "OK ERR"
 echo.
-echo  Listo. Manda a Claude el fichero logs\herramientas_mcp.txt (no contiene llaves).
+echo  Listo. Manda a Claude el fichero logs\herramientas_mcp.txt - no contiene llaves.
 pause
