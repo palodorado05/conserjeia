@@ -136,7 +136,7 @@ class Indice:
 
     @property
     def modo(self) -> str:
-        return "denso" if self.matriz is not None else "lexico"
+        return "hibrido" if self.matriz is not None else "lexico"
 
     def buscar(self, pregunta: str, k: int | None = None, modo: str | None = None) -> dict:
         """Devuelve {'resultados': top-k ARTÍCULOS, 'contexto': top trozos, 'abstiene', 'modo', 'mejor'}.
