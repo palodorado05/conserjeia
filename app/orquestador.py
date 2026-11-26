@@ -28,6 +28,11 @@ def _fecha(iso: str) -> str:
     return f"el {DIAS[d.weekday()]} {d.day:02d}/{d.month:02d} a las {d:%H:%M}"
 
 
+def _donde(plataforma: str) -> str:
+    """'en Notion' con cuentas reales; 'en Notion (simulado)' en modo mock, para que nadie lo confunda."""
+    return plataforma if cfg()["modo_plataformas"] == "mcp" else f"{plataforma} (simulado)"
+
+
 def _escalar(motivo: str, remitente: dict, mensaje: str, t: traza.Traza, avisar: bool = True) -> dict:
     """Deja el caso para revisión humana: fichero local + correo al administrador (dirección FIJA de config)."""
     reg = {"ts": datetime.now().isoformat(timespec="seconds"), "sesion": t.id, "motivo": motivo,
@@ -100,14 +105,14 @@ def procesar(mensaje: str, remitente: dict, canal: str = "chat", historial: list
         inc, cita = ic["incidencia"], ic["cita"]
         if ic["accion"] == "creada":
             hechos.append(f"Se ha registrado la incidencia {inc['id']} «{inc['titulo']}» con prioridad {inc['prioridad']}.")
-            out["acciones"].append({"tipo": "notion", "texto": f"Incidencia {inc['id']} creada en Notion"})
+            out["acciones"].append({"tipo": "notion", "texto": f"Incidencia {inc['id']} creada en {_donde('Notion')}"})
         elif ic["accion"] == "duplicada":
             hechos.append(f"Ya estaba registrada la incidencia {inc['id']} «{inc['titulo']}» (aviso del {inc['fecha']}, "
                           f"estado: {inc['estado']}); no se abre otra para no duplicar y se tiene en cuenta este nuevo aviso.")
             out["acciones"].append({"tipo": "duplicado", "texto": f"Duplicado de {inc['id']}: no se crea otra"})
         elif ic["accion"] == "consultada":
             hechos.append(f"La incidencia {inc['id']} «{inc['titulo']}» está en estado: {inc['estado']}.")
-            out["acciones"].append({"tipo": "consulta", "texto": f"Estado de {inc['id']} consultado en Notion"})
+            out["acciones"].append({"tipo": "consulta", "texto": f"Estado de {inc['id']} consultado en {_donde('Notion')}"})
         elif ic["accion"] == "no_encontrada":
             hechos.append("No hay ninguna incidencia registrada sobre ese tema; si describe el problema, se registra.")
         elif ic["accion"] == "no_registrada":
@@ -118,7 +123,7 @@ def procesar(mensaje: str, remitente: dict, canal: str = "chat", historial: list
         if cita:
             hechos.append(f"Hay un {cita['tecnico'].lower()} citado {_fecha(cita['inicio'])}.")
             if ic["accion"] == "creada":
-                out["acciones"].append({"tipo": "calendario", "texto": f"Visita de {cita['tecnico']} {_fecha(cita['inicio'])}"})
+                out["acciones"].append({"tipo": "calendario", "texto": f"Visita de {cita['tecnico']} {_fecha(cita['inicio'])} en {_donde('Google Calendar')}"})
         elif ic["accion"] == "creada" and ic["errores"]:
             hechos.append("La visita del técnico aún no se ha podido reservar; la gestionará el administrador.")
             escalar_motivo = "fallo al reservar técnico: " + "; ".join(ic["errores"])
@@ -145,7 +150,7 @@ def procesar(mensaje: str, remitente: dict, canal: str = "chat", historial: list
             env = P.llamar("orquestador", "correo.escribir", para=remitente["email"],
                            asunto="Re: " + (en_respuesta_a or {}).get("asunto", "tu mensaje"),
                            cuerpo=out["respuesta"], en_respuesta_a=(en_respuesta_a or {}).get("id"))
-            out["acciones"].append({"tipo": "correo", "texto": f"Respuesta enviada por correo ({env['id']})"})
+            out["acciones"].append({"tipo": "correo", "texto": f"Respuesta enviada por {_donde('Outlook')} ({env['id']})"})
         except P.PlataformaCaida as e:
             out["escalado"] = out["escalado"] or _escalar(f"no se pudo enviar la respuesta: {e}", remitente, mensaje, t, avisar=False)
     return out

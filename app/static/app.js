@@ -25,7 +25,9 @@ async function cargarEstado() {
   $("#estado").innerHTML =
     `<span class="pastilla" title="Modelo local servido por Ollama"><span class="punto ${llmOk ? "" : l.ollama ? "medio" : "mal"}"></span>${esc(l.modelo)}${llmOk ? "" : l.ollama ? " (falta el modelo)" : " · sin Ollama: modo degradado"}</span>` +
     `<span class="pastilla" title="RAG sobre la LPH"><span class="punto ${ESTADO.rag.modo === "sin corpus" ? "mal" : ESTADO.rag.modo === "lexico" ? "medio" : ""}"></span>RAG ${esc(ESTADO.rag.modo)}</span>` +
-    `<span class="pastilla" title="Backend de plataformas">MCP: ${esc(ESTADO.modo_plataformas)}</span>` +
+    (ESTADO.modo_plataformas === "mcp"
+      ? `<span class="pastilla" title="Outlook, Google Calendar y Notion reales, vía servidores MCP"><span class="punto"></span>MCP: cuentas reales</span>`
+      : `<span class="pastilla" title="Sin cuentas: Outlook, Calendar y Notion simulados dentro de la app (data/mock). Las cuentas reales se enseñan en la demo y en las trazas."><span class="punto medio"></span>MCP: modo prueba (simulado)</span>`) +
     pl.map(([k, n]) => {
       const caida = ESTADO.caidas.includes(k);
       return `<button class="pastilla" data-plat="${k}" title="Clic para ${caida ? "restaurar" : "simular una caída de"} ${n}"><span class="punto ${caida ? "mal" : ""}"></span>${n}${caida ? " caída" : ""}</button>`;
