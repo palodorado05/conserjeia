@@ -75,6 +75,9 @@ mcp:
       args: ["-y", "@softeria/ms-365-mcp-server"]
       env:
         MS365_MCP_CLIENT_ID: "${MS365_MCP_CLIENT_ID}"
+        # cuentas personales (@outlook.com): desde junio de 2026 Microsoft rechaza renovar el permiso
+        # si se pide por la autoridad genérica 'common'; hay que usar 'consumers'
+        MS365_MCP_TENANT_ID: "consumers"
     google:                       # Google Calendar (cuenta conserje.demo@gmail.com) — @cocal/google-calendar-mcp
       comando: "npx"
       args: ["-y", "@cocal/google-calendar-mcp"]

@@ -59,18 +59,25 @@ python -m app.tools.preparar_notion
 if errorlevel 1 ( pause & exit /b 1 )
 
 REM ---- 4. Outlook: iniciar sesion solo si hace falta ----
+REM Cuentas personales: autoridad "consumers" (con "common" Microsoft no renueva el permiso)
+set "MS365_MCP_TENANT_ID=consumers"
 echo.
 echo [4/6] Outlook: comprobando la sesion...
+REM la primera vez con "consumers" se pide el permiso de nuevo aunque haya una sesion antigua
+if not exist logs\outlook_consumers.ok goto login_outlook
 call npx -y @softeria/ms-365-mcp-server --verify-login > logs\outlook.txt 2>&1
 findstr /C:"\"success\":true" logs\outlook.txt >nul
-if errorlevel 1 (
-    echo        Abajo aparecera una direccion web y un CODIGO.
-    echo        Abre la direccion, pega el codigo y entra con el correo de Outlook del conserje.
-    echo.
-    call npx -y @softeria/ms-365-mcp-server --login
-) else (
-    echo        Outlook ya estaba conectado.
-)
+if errorlevel 1 goto login_outlook
+echo        Outlook ya estaba conectado.
+goto fin_outlook
+:login_outlook
+call npx -y @softeria/ms-365-mcp-server --logout >nul 2>&1
+echo        Abajo aparecera una direccion web y un CODIGO.
+echo        Abre la direccion, pega el codigo y entra con el correo de Outlook del conserje.
+echo.
+call npx -y @softeria/ms-365-mcp-server --login
+echo ok> logs\outlook_consumers.ok
+:fin_outlook
 
 REM ---- 5. Google Calendar: iniciar sesion ----
 echo.
