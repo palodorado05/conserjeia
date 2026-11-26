@@ -16,6 +16,16 @@ Todo corre en local con un modelo abierto (**qwen3:8b en Ollama**), sin coste po
 
 ## 1. Arranque rápido (modo mock: sin cuentas, en cualquier portátil)
 
+**La forma más fácil: doble clic.**
+
+- **Windows:** `INSTALAR_WINDOWS.bat`
+- **Mac:** `INSTALAR_MAC.command` (si macOS lo bloquea: clic derecho → Abrir)
+
+El script instala Ollama y Python si faltan, descarga los modelos, prepara el entorno, construye el
+índice y abre http://localhost:8000. La primera vez tarda 10-15 min (~6 GB de descarga).
+
+**A mano:**
+
 Requisitos: Python 3.10+ y [Ollama](https://ollama.com/download).
 
 ```bash
