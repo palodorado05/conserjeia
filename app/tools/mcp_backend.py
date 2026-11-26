@@ -106,8 +106,11 @@ class BackendMCP:
 
     # --- Outlook (@softeria/ms-365-mcp-server) ---------------------------------
     def correo_leer(self):
-        # TODO: confirmad los parámetros con --listar (el servidor expone la API de Microsoft Graph)
-        r = self.llamar_crudo("correo.leer", {"top": 15, "select": ["id", "subject", "from", "body", "receivedDateTime"]})
+        # Solo la carpeta Bandeja de entrada ("inbox"): list-mail-messages mira TODAS las carpetas, incluida
+        # Enviados, y el conserje acabaría leyendo (y contestando) sus propios correos.
+        r = self.llamar_crudo("correo.leer", {"mailFolderId": "inbox", "$top": 25,
+                                              "$orderby": ["receivedDateTime desc"],
+                                              "$select": ["id", "subject", "from", "body", "receivedDateTime"]})
         mensajes = r.get("value", []) if isinstance(r, dict) else []
         return [{"id": m["id"],
                  "de": m.get("from", {}).get("emailAddress", {}).get("address", ""),

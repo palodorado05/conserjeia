@@ -93,7 +93,7 @@ mcp:
   # Nombre REAL de cada herramienta en su servidor.
   # TODO: ejecutad `python -m app.tools.mcp_backend --listar` y corregid estos nombres.
   herramientas:
-    correo.leer:         {servidor: outlook, nombre: "list-mail-messages"}
+    correo.leer:         {servidor: outlook, nombre: "list-mail-folder-messages"}   # SOLO la bandeja de entrada
     correo.escribir:     {servidor: outlook, nombre: "send-mail"}
     calendario.leer:     {servidor: google,  nombre: "list-events"}
     calendario.escribir: {servidor: google,  nombre: "create-event"}
