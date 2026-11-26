@@ -19,7 +19,7 @@ def main() -> None:
         sys.exit("Faltan GOOGLE_OAUTH_CLIENT_ID o GOOGLE_OAUTH_CLIENT_SECRET en el fichero .env")
     p = ruta("data/google_oauth.json")
     p.write_text(json.dumps({"installed": {
-        "client_id": cid, "client_secret": sec, "project_id": "conserje-ia",
+        "client_id": cid, "client_secret": sec,
         "auth_uri": "https://accounts.google.com/o/oauth2/auth", "token_uri": "https://oauth2.googleapis.com/token",
         "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
         "redirect_uris": ["http://localhost"]}}, indent=1), encoding="utf-8")

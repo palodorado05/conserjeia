@@ -56,7 +56,19 @@ class BackendMCP:
                 self.sesiones[nombre] = sesion
             return self.sesiones[nombre]
 
-    async def _llamar(self, servidor: str, herramienta: str, args: dict):
+    async def _llamar(self, servidor: str, herramienta: str, args: dict, intentos: int = 3):
+        """Llama a la herramienta. Reintenta si el servidor corta la petición por tiempo
+        (p. ej. el de Google Calendar da sólo 3 s a su primera consulta, cuando aún renueva el permiso)."""
+        for i in range(intentos):
+            try:
+                return await self._llamar_una_vez(servidor, herramienta, args)
+            except RuntimeError as e:
+                transitorio = any(t in str(e).lower() for t in ("aborted", "timed out", "timeout", "econnreset"))
+                if not transitorio or i == intentos - 1:
+                    raise
+                await asyncio.sleep(1 + i)
+
+    async def _llamar_una_vez(self, servidor: str, herramienta: str, args: dict):
         s = await self._sesion(servidor)
         r = await asyncio.wait_for(s.call_tool(herramienta, args), timeout=60)
         textos = [c.text for c in r.content if getattr(c, "type", "") == "text"]
