@@ -214,22 +214,60 @@ if __name__ == "__main__":
         pass
     ap = argparse.ArgumentParser()
     ap.add_argument("--listar", action="store_true", help="lista las herramientas reales de cada servidor")
-    ap.add_argument("--probar", action="store_true", help="llama una vez a cada herramienta lógica")
+    ap.add_argument("--comprobar", action="store_true", help="comprueba que los nombres de config.yaml existen")
+    ap.add_argument("--google", action="store_true", help="inicia sesión en Google Calendar (abre el navegador)")
+    ap.add_argument("--probar", action="store_true", help="llama una vez a cada herramienta lógica de lectura")
     a = ap.parse_args()
     b = BackendMCP()
+    from datetime import timedelta
+    ahora = datetime.now().replace(second=0, microsecond=0)
+    leer_cal = {"desde": ahora.isoformat(), "hasta": (ahora + timedelta(days=7)).isoformat()}
+
+    if a.listar or a.comprobar:
+        listado = b._correr(b._listar())
     if a.listar:
-        for srv, tools in b._correr(b._listar()).items():
+        for srv, tools in listado.items():
             print(f"\n== {srv} ==")
-            print(tools if isinstance(tools, str) else "\n".join(f"  {n:40s} {d}" for n, d in tools))
+            print(tools if isinstance(tools, str) else "\n".join(f"  {n:40s} {d.splitlines()[0] if d else ''}" for n, d in tools))
+    if a.comprobar:
+        import difflib
+        print("\n== Nombres de herramientas en config.yaml ==")
+        for logica, h in b.c["herramientas"].items():
+            tools = listado.get(h["servidor"])
+            if isinstance(tools, str):
+                print(f"??  {logica:20s} -> {h['nombre']}  (servidor {h['servidor']} no responde)")
+                continue
+            nombres = [n for n, _ in tools]
+            if h["nombre"] in nombres:
+                print(f"OK  {logica:20s} -> {h['nombre']}")
+            else:
+                print(f"NO  {logica:20s} -> {h['nombre']}  ¿quizá? {difflib.get_close_matches(h['nombre'], nombres, n=3, cutoff=0.3)}")
+
+    if a.google:
+        import webbrowser
+        for intento in range(3):
+            try:
+                b.ejecutar("calendario.leer", leer_cal)
+                print("OK  Google Calendar conectado.")
+                break
+            except Exception as e:
+                texto = str(e)
+                enlaces = re.findall(r"https://accounts\.google\.com/[^\s\)\]\"'<>*]+", texto)
+                if not enlaces:
+                    print(f"ERR Google: {texto[:600]}")
+                    break
+                print("\nSe abre el navegador: entra con la cuenta de Gmail del conserje y pulsa Permitir/Continuar.")
+                print("Si sale 'Google no ha verificado esta app': Configuracion avanzada -> Ir a Conserje IA.")
+                print(f"(si no se abre solo, copia este enlace en el navegador)\n{enlaces[0]}\n")
+                webbrowser.open(enlaces[0])
+                input("Cuando el navegador diga que ya esta autorizado, vuelve aqui y pulsa Enter... ")
+
     if a.probar:
-        from datetime import timedelta
-        ahora = datetime.now().replace(second=0, microsecond=0)
-        pruebas = [("correo.leer", {}), ("notion.leer", {}),
-                   ("calendario.leer", {"desde": ahora.isoformat(), "hasta": (ahora + timedelta(days=7)).isoformat()})]
+        pruebas = [("correo.leer", {}), ("notion.leer", {}), ("calendario.leer", leer_cal)]
         for h, args in pruebas:
             try:
                 r = b.ejecutar(h, args)
-                print(f"OK  {h}: {len(r)} elementos · primero: {json.dumps(r[:1], ensure_ascii=False)[:200]}")
+                print(f"OK  {h}: {len(r)} elementos")
             except Exception as e:
-                print(f"ERR {h}: {e}")
+                print(f"ERR {h}: {str(e)[:300]}")
         print("(las escrituras se prueban desde la app: un aviso en el chat crea incidencia y cita)")

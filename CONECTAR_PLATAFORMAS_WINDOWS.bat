@@ -58,24 +58,31 @@ echo [3/6] Creando la base de datos Incidencias en Notion...
 python -m app.tools.preparar_notion
 if errorlevel 1 ( pause & exit /b 1 )
 
-REM ---- 4. Outlook: iniciar sesion (una sola vez) ----
+REM ---- 4. Outlook: iniciar sesion solo si hace falta ----
 echo.
-echo [4/6] Outlook: abajo aparecera una direccion web y un CODIGO.
-echo        Abre la direccion, pega el codigo y entra con el correo de Outlook del conserje.
-echo.
-call npx -y @softeria/ms-365-mcp-server --login
+echo [4/6] Outlook: comprobando la sesion...
+call npx -y @softeria/ms-365-mcp-server --verify-login > logs\outlook.txt 2>&1
+findstr /C:"\"success\":true" logs\outlook.txt >nul
+if errorlevel 1 (
+    echo        Abajo aparecera una direccion web y un CODIGO.
+    echo        Abre la direccion, pega el codigo y entra con el correo de Outlook del conserje.
+    echo.
+    call npx -y @softeria/ms-365-mcp-server --login
+) else (
+    echo        Outlook ya estaba conectado.
+)
 
-REM ---- 5. Listar las herramientas reales de cada servidor ----
+REM ---- 5. Google Calendar: iniciar sesion ----
 echo.
-echo [5/6] Comprobando los 3 servidores - puede tardar 1-2 minutos...
-python -m app.tools.mcp_backend --listar > logs\herramientas_mcp.txt 2>&1
-type logs\herramientas_mcp.txt
+echo [5/6] Google Calendar: se abrira el navegador si hace falta dar permiso...
+python -m app.tools.mcp_backend --google
 
-REM ---- 6. Prueba de lectura ----
+REM ---- 6. Comprobacion final ----
 echo.
-echo [6/6] Probando a leer de las 3 plataformas...
+echo [6/6] Comprobando nombres de herramientas y lectura de las 3 plataformas...
+python -m app.tools.mcp_backend --listar --comprobar > logs\herramientas_mcp.txt 2>&1
 python -m app.tools.mcp_backend --probar >> logs\herramientas_mcp.txt 2>&1
-type logs\herramientas_mcp.txt | findstr /B "OK ERR"
+findstr /B "OK NO ?? ERR" logs\herramientas_mcp.txt
 echo.
-echo  Listo. Manda a Claude el fichero logs\herramientas_mcp.txt - no contiene llaves.
+echo  Listo. Manda a Claude una captura de esta ventana.
 pause
