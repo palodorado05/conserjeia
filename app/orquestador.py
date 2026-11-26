@@ -37,6 +37,10 @@ def _escalar(motivo: str, remitente: dict, mensaje: str, t: traza.Traza, avisar:
     with open(p, "a", encoding="utf-8") as f:
         f.write(json.dumps(reg, ensure_ascii=False) + "\n")
     t.evento("escalado", motivo=motivo)
+    admin = cfg()["comunidad"]["correo_administrador"]
+    if cfg()["modo_plataformas"] == "mcp" and admin.endswith("fincas-demo.es"):
+        avisar = False            # dirección inventada: con correo real no se escribe (queda en logs/escalados.jsonl)
+        t.evento("escalado_sin_correo", motivo="falta CORREO_ADMINISTRADOR en .env")
     if avisar:
         try:
             P.llamar("orquestador", "correo.escribir", para=cfg()["comunidad"]["correo_administrador"],
@@ -166,7 +170,13 @@ def procesar_bandeja(maximo: int = 20) -> list[dict]:
             return [{"error": f"No se pudo leer la bandeja: {e}"}]
         t.cerrar()
     hechos = _procesados()
+    ignorar = [x.lower() for x in cfg()["comunidad"].get("remitentes_ignorados", [])]
+    def automatico(c: dict) -> bool:
+        return any(x in (c.get("de") or "").lower() for x in ignorar)
     resultados = []
+    for c in [c for c in correos if c["id"] not in hechos and automatico(c)]:
+        hechos.add(c["id"])                       # los automáticos se marcan como vistos y no se contestan
+    PROCESADOS.write_text(json.dumps(sorted(hechos)))
     for c in [c for c in correos if c["id"] not in hechos][:maximo]:
         with traza.sesion("correo") as t:
             rem = {"email": c["de"], "nombre": c.get("nombre", ""), "vivienda": router._vivienda(c.get("nombre", ""))}

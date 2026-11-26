@@ -9,7 +9,11 @@ modo_plataformas: mock      # mock  -> plataformas simuladas en data/mock/estado
 
 comunidad:
   nombre: "Comunidad de Propietarios Calle Alcalá 123"
-  correo_administrador: "administracion@fincas-demo.es"
+  correo_administrador: "administracion@fincas-demo.es"   # se sustituye por CORREO_ADMINISTRADOR de .env
+                                                          # (dirección inventada: en modo mcp no se le escribe)
+  # Remitentes automáticos que el conserje NUNCA contesta (bienvenidas, avisos de seguridad...)
+  remitentes_ignorados: ["noreply", "no-reply", "donotreply", "do-not-reply", "notification", "mailer-daemon",
+                         "postmaster", "microsoft.com", "accountprotection", "google.com", "notion.so"]
   zona_horaria: "Europe/Madrid"
   horario_tecnicos: {inicio: 9, fin: 14, duracion_min: 60, dias_busqueda: 7}
 

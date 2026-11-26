@@ -39,6 +39,7 @@ def cfg() -> dict:
     # Permite cambiar el modo sin tocar el fichero: MODO_PLATAFORMAS=mcp python -m app
     c["modo_plataformas"] = os.environ.get("MODO_PLATAFORMAS", c["modo_plataformas"])
     c["ollama"]["url"] = os.environ.get("OLLAMA_URL", c["ollama"]["url"])
+    c["comunidad"]["correo_administrador"] = os.environ.get("CORREO_ADMINISTRADOR") or c["comunidad"]["correo_administrador"]
     c["ollama"]["modelo"] = os.environ.get("OLLAMA_MODELO", c["ollama"]["modelo"])
     random.seed(c["semilla"])
     return c
