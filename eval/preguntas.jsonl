@@ -1,0 +1,42 @@
+{"id": 1, "pregunta": "¿Quién paga la instalación del ascensor en el edificio?", "esperado": ["Art. 17 LPH", "Art. 10 LPH"]}
+{"id": 2, "pregunta": "Un vecino lleva meses sin pagar las cuotas de la comunidad, ¿qué podemos hacer?", "esperado": ["Art. 21 LPH"]}
+{"id": 3, "pregunta": "¿Con cuánta antelación hay que convocar la junta de propietarios?", "esperado": ["Art. 16 LPH"]}
+{"id": 4, "pregunta": "¿Puede votar en la junta un propietario que debe dinero a la comunidad?", "esperado": ["Art. 15 LPH"]}
+{"id": 5, "pregunta": "No puedo ir a la junta, ¿puede ir otra persona en mi nombre?", "esperado": ["Art. 15 LPH"]}
+{"id": 6, "pregunta": "¿Cuántas veces al año tiene que reunirse la junta?", "esperado": ["Art. 16 LPH"]}
+{"id": 7, "pregunta": "¿Qué mayoría hace falta para limitar los pisos turísticos en el edificio?", "esperado": ["Art. 17 LPH"]}
+{"id": 8, "pregunta": "Quiero instalar un punto de recarga para mi coche eléctrico en mi plaza de garaje, ¿necesito permiso de la comunidad?", "esperado": ["Art. 17 LPH"]}
+{"id": 9, "pregunta": "¿Qué obras son obligatorias para la comunidad sin necesidad de acuerdo de la junta?", "esperado": ["Art. 10 LPH"]}
+{"id": 10, "pregunta": "¿Puedo cerrar mi terraza con cristales o cambiar la fachada de mi piso?", "esperado": ["Art. 7 LPH", "Art. 10 LPH", "Art. 17 LPH"]}
+{"id": 11, "pregunta": "El vecino de arriba hace ruidos molestos y actividades insalubres en su piso, ¿qué puede hacer la comunidad?", "esperado": ["Art. 7 LPH"]}
+{"id": 12, "pregunta": "¿Qué es el fondo de reserva y de cuánto tiene que ser?", "esperado": ["Art. 9 LPH", "Disposición adicional primera LPH"]}
+{"id": 13, "pregunta": "¿Estoy obligado a dejar entrar a los operarios en mi casa para reparar una tubería común?", "esperado": ["Art. 9 LPH"]}
+{"id": 14, "pregunta": "Acabo de comprar un piso, ¿respondo de las deudas con la comunidad del dueño anterior?", "esperado": ["Art. 9 LPH"]}
+{"id": 15, "pregunta": "¿Cómo puedo impugnar un acuerdo de la junta que me perjudica?", "esperado": ["Art. 18 LPH"]}
+{"id": 16, "pregunta": "¿Qué plazo tengo para recurrir un acuerdo de la junta en los tribunales?", "esperado": ["Art. 18 LPH"]}
+{"id": 17, "pregunta": "¿Qué funciones tiene el administrador de la finca?", "esperado": ["Art. 20 LPH"]}
+{"id": 18, "pregunta": "¿Es obligatorio aceptar el cargo de presidente de la comunidad?", "esperado": ["Art. 13 LPH"]}
+{"id": 19, "pregunta": "¿Qué tiene que poner el acta de la junta y cuándo se envía?", "esperado": ["Art. 19 LPH"]}
+{"id": 20, "pregunta": "¿Cómo se reparten los gastos comunes entre los vecinos?", "esperado": ["Art. 9 LPH", "Art. 3 LPH", "Art. 5 LPH"]}
+{"id": 21, "pregunta": "¿Qué es la cuota de participación de mi piso?", "esperado": ["Art. 3 LPH", "Art. 5 LPH"]}
+{"id": 22, "pregunta": "¿Puedo dividir mi piso en dos viviendas más pequeñas?", "esperado": ["Art. 10 LPH"]}
+{"id": 23, "pregunta": "¿Qué asuntos le corresponde decidir a la junta de propietarios?", "esperado": ["Art. 14 LPH"]}
+{"id": 24, "pregunta": "La comunidad debe dinero a una empresa de mantenimiento, ¿me lo pueden reclamar a mí personalmente?", "esperado": ["Art. 22 LPH"]}
+{"id": 25, "pregunta": "¿En qué casos se extingue el régimen de propiedad horizontal?", "esperado": ["Art. 23 LPH"]}
+{"id": 26, "pregunta": "Vivimos en una urbanización con varios edificios y una piscina común, ¿se nos aplica esta ley?", "esperado": ["Art. 24 LPH", "Art. 2 LPH"]}
+{"id": 27, "pregunta": "¿Cuentan los votos de los propietarios que no asistieron a la junta?", "esperado": ["Art. 17 LPH"]}
+{"id": 28, "pregunta": "¿Qué es el título constitutivo del edificio?", "esperado": ["Art. 5 LPH"]}
+{"id": 29, "pregunta": "¿Puede la comunidad poner normas de uso del portal y de la piscina?", "esperado": ["Art. 6 LPH"]}
+{"id": 30, "pregunta": "¿Qué mayoría hace falta para instalar fibra óptica o una antena común?", "esperado": ["Art. 17 LPH"]}
+{"id": 31, "pregunta": "¿Puedo pedir que se divida el edificio para salir de la comunidad?", "esperado": ["Art. 4 LPH"]}
+{"id": 32, "pregunta": "Mi madre va en silla de ruedas, ¿está obligada la comunidad a poner una rampa en el portal?", "esperado": ["Art. 10 LPH"]}
+{"id": 33, "pregunta": "¿Puede la junta acordar recargos o medidas contra los morosos?", "esperado": ["Art. 21 LPH"]}
+{"id": 34, "pregunta": "¿A qué tipo de edificios y comunidades se aplica la ley de propiedad horizontal?", "esperado": ["Art. 1 LPH", "Art. 2 LPH"]}
+{"id": 101, "pregunta": "¿Cuál es la capital de Francia?", "esperado": []}
+{"id": 102, "pregunta": "Dame una receta de tortilla de patatas", "esperado": []}
+{"id": 103, "pregunta": "¿Cuánto se paga de IBI en Madrid?", "esperado": []}
+{"id": 104, "pregunta": "¿Qué horario tiene la farmacia de guardia del barrio?", "esperado": []}
+{"id": 105, "pregunta": "¿Cómo recurro una multa de tráfico?", "esperado": []}
+{"id": 106, "pregunta": "¿Cuál es el plazo para presentar la declaración de la renta?", "esperado": []}
+{"id": 107, "pregunta": "¿Cuánto cuesta cambiar la caldera de gas de mi casa?", "esperado": []}
+{"id": 108, "pregunta": "¿Me puede subir el casero el alquiler más que el IPC?", "esperado": []}

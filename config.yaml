@@ -1,0 +1,99 @@
+# ============================================================================
+# Conserje IA — configuración central
+# Todo lo que cambia el comportamiento del sistema está aquí (no en el código).
+# ============================================================================
+
+semilla: 42                 # semilla fija: Ollama (options.seed) y cualquier aleatoriedad de Python
+modo_plataformas: mock      # mock  -> plataformas simuladas en data/mock/estado.json (arranca sin cuentas)
+                            # mcp   -> Outlook + Google Calendar + Notion de verdad vía servidores MCP
+
+comunidad:
+  nombre: "Comunidad de Propietarios Calle Alcalá 123"
+  correo_administrador: "administracion@fincas-demo.es"
+  zona_horaria: "Europe/Madrid"
+  horario_tecnicos: {inicio: 9, fin: 14, duracion_min: 60, dias_busqueda: 7}
+
+# ---------------------------------------------------------------------------
+# Modelo que lleva dentro el producto (servido en local con Ollama, gratis)
+# ---------------------------------------------------------------------------
+ollama:
+  url: "http://localhost:11434"
+  modelo: "qwen3:8b"
+  modelo_embeddings: "nomic-embed-text"
+  num_ctx: 8192
+  timeout_s: 300
+
+# Esfuerzo de razonamiento por tipo de tarea (parámetro `think` de qwen3).
+# true  = el modelo razona antes de contestar (más tokens de salida, más lento, más preciso)
+# false = contesta directamente
+esfuerzo:
+  router:      {think: false, temperatura: 0.0}   # clasificar: tarea corta y cerrada
+  legal:       {think: true,  temperatura: 0.1}   # interpretar la LPH: aquí sí compensa razonar
+  incidencias: {think: false, temperatura: 0.0}   # extraer campos a JSON
+  redactor:    {think: false, temperatura: 0.3}   # redactar el correo: estilo, no lógica
+  verificador: {think: true,  temperatura: 0.0}   # juez: debe razonar si la respuesta se sostiene
+
+# ---------------------------------------------------------------------------
+# RAG sobre la Ley de Propiedad Horizontal (data/corpus/lph.pdf)
+# ---------------------------------------------------------------------------
+rag:
+  pdf: "data/corpus/lph.pdf"
+  k: 3                      # artículos distintos que se devuelven (acierto@3)
+  trozos_contexto: 5        # trozos que se pasan al modelo como contexto
+  tam_trozo: 1200           # caracteres por trozo (los artículos largos se parten)
+  solape: 150
+  umbral_abstencion: 0.62   # similitud coseno mínima del mejor trozo; por debajo -> "no lo sé"
+  umbral_abstencion_lexico: 4.0   # mismo papel cuando no hay embeddings (modo degradado BM25)
+
+# ---------------------------------------------------------------------------
+# Barandillas
+# ---------------------------------------------------------------------------
+guardrails:
+  max_caracteres_mensaje: 6000
+  umbral_riesgo: 2          # puntuación >= umbral -> mensaje tratado como inyección y escalado
+
+# Qué agente puede usar qué herramienta. Lo que no está aquí está DENEGADO.
+permisos:
+  orquestador: ["correo.leer", "correo.escribir"]
+  incidencias: ["notion.leer", "notion.escribir", "calendario.leer", "calendario.escribir"]
+  legal: []
+  redactor: []
+  verificador: []
+
+# ---------------------------------------------------------------------------
+# Servidores MCP (sólo se usan con modo_plataformas: mcp)
+# Los secretos NUNCA van aquí: se leen de variables de entorno (${VAR}).
+# ---------------------------------------------------------------------------
+mcp:
+  servidores:
+    outlook:                      # Microsoft (cuenta conserje.demo@outlook.com)
+      comando: "npx"
+      args: ["-y", "@softeria/ms-365-mcp-server"]
+      env:
+        MS365_MCP_CLIENT_ID: "${MS365_MCP_CLIENT_ID}"
+    google:                       # Google Calendar (cuenta conserje.demo@gmail.com)
+      comando: "uvx"
+      args: ["workspace-mcp", "--tools", "calendar"]
+      env:
+        GOOGLE_OAUTH_CLIENT_ID: "${GOOGLE_OAUTH_CLIENT_ID}"
+        GOOGLE_OAUTH_CLIENT_SECRET: "${GOOGLE_OAUTH_CLIENT_SECRET}"
+        OAUTHLIB_INSECURE_TRANSPORT: "1"
+    notion:                       # Notion (base de datos "Incidencias")
+      comando: "npx"
+      args: ["-y", "@notionhq/notion-mcp-server"]
+      env:
+        NOTION_TOKEN: "${NOTION_TOKEN}"
+
+  # Nombre REAL de cada herramienta en su servidor.
+  # TODO: ejecutad `python -m app.tools.mcp_backend --listar` y corregid estos nombres.
+  herramientas:
+    correo.leer:         {servidor: outlook, nombre: "list-mail-messages"}
+    correo.escribir:     {servidor: outlook, nombre: "send-mail"}
+    calendario.leer:     {servidor: google,  nombre: "get_events"}
+    calendario.escribir: {servidor: google,  nombre: "create_event"}
+    notion.leer:         {servidor: notion,  nombre: "API-query-data-source"}
+    notion.escribir:     {servidor: notion,  nombre: "API-post-page"}
+
+  # Identificadores de vuestras cuentas/bases (no son secretos, pero tampoco van al repo si no queréis)
+  google_email: "${GOOGLE_USER_EMAIL}"          # conserje.demo@gmail.com
+  notion_data_source_id: "${NOTION_DATA_SOURCE_ID}"   # id de la base "Incidencias"

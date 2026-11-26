@@ -1,0 +1,55 @@
+# ============================================================================
+# SUPUESTOS DE NEGOCIO — todo lo que hay aquí es ESTIMACIÓN (no medido).
+# Lo MEDIDO sale de logs/usage.jsonl, logs/trazas.jsonl y logs/coste_construccion.json.
+# Cada valor lleva su supuesto al lado. Cambiadlos y re-ejecutad: python -m negocio.modelo_financiero
+# ============================================================================
+
+cambio_usd_eur: 0.92            # ESTIMACIÓN: tipo de cambio aproximado
+
+# --- Coste de construcción (arnés: Claude Code con Claude Opus 5.5) -------------
+precio_opus_5_5_usd_por_mtok:   # tarifa pública API Anthropic (nov-2026)
+  entrada: 4.00
+  salida: 20.00
+  cache_escritura: 5.00         # 1,25 x entrada (caché de 5 min)
+  cache_lectura: 0.20
+horas_equipo_construccion: 120  # ESTIMACIÓN: 4 personas x 30 h
+coste_hora_equipo_eur: 0        # ESTIMACIÓN: trabajo de los fundadores no remunerado (sweat equity)
+
+# --- Uso del producto ---------------------------------------------------------
+# Unidad de venta: una COMUNIDAD de propietarios (cliente = el administrador de fincas, por comunidad)
+viviendas_por_comunidad: 30     # ESTIMACIÓN: tamaño típico de comunidad urbana
+sesiones_por_vivienda_mes: 1.5  # ESTIMACIÓN: avisos/consultas al mes por vivienda
+# -> sesiones/comunidad/mes = 45
+
+# --- Servidor (modelo abierto qwen3:8b servido con Ollama/vLLM) ----------------
+gpu:
+  nombre: "NVIDIA L4 24 GB (nube, bajo demanda)"
+  vram_gb: 24                   # qwen3:8b Q4 ocupa ~5-6 GB: cabe con margen para KV-cache
+  eur_hora: 0.75                # ESTIMACIÓN: precio de mercado de una L4 bajo demanda
+  horas_mes: 730                # 24x7
+  concurrencia: 4               # ESTIMACIÓN: peticiones simultáneas sin degradar latencia
+  utilizacion_objetivo: 0.5     # ESTIMACIÓN: no se puede ir al 100 % (picos de mañana)
+# Duración de una sesión en GPU: se MIDE en CPU/portátil pero en GPU es más rápida; usamos un factor:
+aceleracion_gpu_vs_medido: 8    # ESTIMACIÓN: L4 vs la máquina donde se midió (ajustad si medís en GPU)
+
+# Alternativa: el mismo consumo de tokens por API cerrada (para comparar)
+alternativa_api:
+  nombre: "Claude Haiku 5.5 por API"
+  usd_mtok_entrada: 0.10
+  usd_mtok_salida: 0.50
+
+# --- Ingresos ------------------------------------------------------------------
+precio_comunidad_mes_eur: 19    # ESTIMACIÓN: ~0,63 €/vivienda/mes; las gestorías cobran 8-15 €/vivienda/mes por administrar
+costes_fijos_mes_eur:
+  servidor_web_y_dominio: 20    # ESTIMACIÓN
+  software_y_cuentas: 30        # ESTIMACIÓN (Notion/Google/Microsoft de empresa)
+  seguro_rc_y_gestoria: 150     # ESTIMACIÓN
+  marketing: 400                # ESTIMACIÓN
+inversion_inicial_extra_eur: 3000   # ESTIMACIÓN: legal (RGPD, contratos), marca, primer piloto
+cac_eur_por_comunidad: 60       # ESTIMACIÓN: coste de captar una comunidad vía administradores de fincas
+
+# Crecimiento (clientes = comunidades)
+comunidades_mes_1: 5            # ESTIMACIÓN: piloto con 1 administrador de fincas
+altas_nuevas_mes: 12            # ESTIMACIÓN: un administrador medio gestiona 40-80 comunidades
+bajas_mensuales: 0.02           # ESTIMACIÓN: churn mensual
+meses_horizonte: 36
