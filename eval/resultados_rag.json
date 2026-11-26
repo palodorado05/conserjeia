@@ -1,5 +1,5 @@
 {
- "fecha": "2026-11-26T08:04:26",
+ "fecha": "2026-11-26T14:38:04",
  "modelo_embeddings": "nomic-embed-text",
  "n_trozos": 74,
  "modos": {
@@ -29,7 +29,7 @@
       "Art. 21 LPH",
       "Art. 10 LPH"
      ],
-     "mejor": 0.7328
+     "mejor": 0.7329
     },
     {
      "id": 22,
@@ -87,7 +87,7 @@
       "Art. 18 LPH",
       "Art. 9 LPH"
      ],
-     "mejor": 0.6559,
+     "mejor": 0.6558,
      "acierto": true,
      "abstiene": false,
      "modo_real": "hibrido"
@@ -126,7 +126,7 @@
       "Art. 16 LPH",
       "Art. 13 LPH"
      ],
-     "mejor": 0.7193,
+     "mejor": 0.7192,
      "acierto": true,
      "abstiene": false,
      "modo_real": "hibrido"
@@ -139,7 +139,7 @@
       "Art. 18 LPH",
       "Art. 13 LPH"
      ],
-     "mejor": 0.7462,
+     "mejor": 0.7463,
      "acierto": true,
      "abstiene": false,
      "modo_real": "hibrido"
@@ -269,7 +269,7 @@
       "Art. 21 LPH",
       "Art. 17 LPH"
      ],
-     "mejor": 0.7282,
+     "mejor": 0.7283,
      "acierto": true,
      "abstiene": false,
      "modo_real": "hibrido"
@@ -321,7 +321,7 @@
       "Art. 21 LPH",
       "Art. 10 LPH"
      ],
-     "mejor": 0.7328,
+     "mejor": 0.7329,
      "acierto": false,
      "abstiene": false,
      "modo_real": "hibrido"
@@ -412,7 +412,7 @@
       "Art. 16 LPH",
       "Art. 18 LPH"
      ],
-     "mejor": 0.7972,
+     "mejor": 0.7971,
      "acierto": true,
      "abstiene": false,
      "modo_real": "hibrido"
@@ -477,7 +477,7 @@
       "Art. 9 LPH",
       "Art. 10 LPH"
      ],
-     "mejor": 0.6294,
+     "mejor": 0.6295,
      "acierto": true,
      "abstiene": false,
      "modo_real": "hibrido"
@@ -490,7 +490,7 @@
       "Art. 14 LPH",
       "Art. 16 LPH"
      ],
-     "mejor": 0.7248,
+     "mejor": 0.7249,
      "acierto": true,
      "abstiene": false,
      "modo_real": "hibrido"
@@ -581,7 +581,7 @@
       "Disposición transitoria primera LPH",
       "Art. 21 LPH"
      ],
-     "mejor": 0.6954,
+     "mejor": 0.6955,
      "acierto": false,
      "abstiene": false,
      "modo_real": "hibrido"
@@ -667,7 +667,7 @@
       "Art. 17 LPH",
       "Art. 22 LPH"
      ],
-     "mejor": 0.6294
+     "mejor": 0.6295
     }
    ],
    "mejor_umbral": {
@@ -698,7 +698,7 @@
       "Art. 22 LPH",
       "Art. 9 LPH"
      ],
-     "mejor": 0.6559,
+     "mejor": 0.6558,
      "acierto": true,
      "abstiene": false,
      "modo_real": "denso"
@@ -737,7 +737,7 @@
       "Art. 15 LPH",
       "Art. 14 LPH"
      ],
-     "mejor": 0.7193,
+     "mejor": 0.7192,
      "acierto": true,
      "abstiene": false,
      "modo_real": "denso"
@@ -750,7 +750,7 @@
       "Art. 19 LPH",
       "Art. 18 LPH"
      ],
-     "mejor": 0.7462,
+     "mejor": 0.7463,
      "acierto": true,
      "abstiene": false,
      "modo_real": "denso"
@@ -880,7 +880,7 @@
       "Art. 21 LPH",
       "Art. 19 LPH"
      ],
-     "mejor": 0.7282,
+     "mejor": 0.7283,
      "acierto": true,
      "abstiene": false,
      "modo_real": "denso"
@@ -932,7 +932,7 @@
       "Art. 21 LPH",
       "Art. 9 LPH"
      ],
-     "mejor": 0.7328,
+     "mejor": 0.7329,
      "acierto": true,
      "abstiene": false,
      "modo_real": "denso"
@@ -1023,7 +1023,7 @@
       "Art. 16 LPH",
       "Art. 17 LPH"
      ],
-     "mejor": 0.7972,
+     "mejor": 0.7971,
      "acierto": true,
      "abstiene": false,
      "modo_real": "denso"
@@ -1088,7 +1088,7 @@
       "Art. 17 LPH",
       "Art. 22 LPH"
      ],
-     "mejor": 0.6294,
+     "mejor": 0.6295,
      "acierto": false,
      "abstiene": false,
      "modo_real": "denso"
@@ -1101,7 +1101,7 @@
       "Art. 16 LPH",
       "Art. 14 LPH"
      ],
-     "mejor": 0.7248,
+     "mejor": 0.7249,
      "acierto": true,
      "abstiene": false,
      "modo_real": "denso"
@@ -1192,7 +1192,7 @@
       "Disposición transitoria primera LPH",
       "Art. 10 LPH"
      ],
-     "mejor": 0.6954,
+     "mejor": 0.6955,
      "acierto": false,
      "abstiene": false,
      "modo_real": "denso"
