@@ -101,6 +101,14 @@ def _panel(herramienta: str, **args):
         raise HTTPException(503, f"{herramienta}: {e}")
 
 
+@app.post("/api/bandeja/marcar_vistos")
+def bandeja_marcar_vistos():
+    """Marca todos los correos actuales como ya procesados, sin contestarlos (p. ej. antes de una demo)."""
+    hechos = orquestador._procesados() | {c["id"] for c in _panel("correo.leer")}
+    orquestador._guardar_procesados(hechos)
+    return {"marcados": len(hechos)}
+
+
 @app.get("/api/bandeja")
 def bandeja():
     hechos = orquestador._procesados()

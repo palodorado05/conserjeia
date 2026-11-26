@@ -118,7 +118,8 @@ const VISTAS = {
     const [correos, enviados] = await Promise.all([api("/api/bandeja"), api("/api/enviados")]);
     const pend = correos.filter((c) => !c.procesado).length;
     return `<div class="barra"><h2>Bandeja de Outlook <span class="nota">· ${pend} sin procesar</span></h2>
-      <button class="btn" id="procesar" ${pend ? "" : "disabled"}>Procesar bandeja con los agentes</button></div>
+      <span><button class="btn sec" id="marcar" ${pend ? "" : "disabled"} title="Marca los correos actuales como vistos sin contestarlos">Marcar todo como visto</button>
+      <button class="btn" id="procesar" ${pend ? "" : "disabled"}>Procesar bandeja con los agentes</button></span></div>
       <div id="progreso"></div>
       ${correos.map((c) => `<div class="correo"><div class="cab"><span><span class="asunto">${esc(c.asunto)}</span> · ${esc(c.nombre)}</span>
         <span>${c.procesado ? '<span class="etiqueta ok">procesado</span>' : '<span class="etiqueta Abierta">nuevo</span>'}</span></div>
@@ -196,6 +197,11 @@ $("#pestanas").addEventListener("click", (e) => { if (e.target.dataset.v) mostra
 
 // procesar bandeja
 $("#vista").addEventListener("click", async (e) => {
+  if (e.target.id === "marcar") {
+    if (!confirm("¿Marcar todos los correos actuales como vistos? No se contestarán.")) return;
+    await post("/api/bandeja/marcar_vistos");
+    return mostrar("bandeja");
+  }
   if (e.target.id !== "procesar") return;
   e.target.disabled = true;
   const prog = $("#progreso");

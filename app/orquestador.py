@@ -154,11 +154,34 @@ def procesar(mensaje: str, remitente: dict, canal: str = "chat", historial: list
 # ---------------------------------------------------------------------------
 # Bandeja de entrada (Outlook): leer -> procesar cada correo nuevo -> responder
 # ---------------------------------------------------------------------------
-PROCESADOS = ruta("data/procesados.json")
+def _ruta_procesados():
+    """Correos ya procesados. Con correo real se guarda en la carpeta del usuario (~/.conserje_ia), no en la
+    del proyecto: así sobrevive a volver a descargar el ZIP y no se contesta dos veces al mismo vecino."""
+    if cfg()["modo_plataformas"] == "mcp":
+        from pathlib import Path
+        d = Path.home() / ".conserje_ia"
+        d.mkdir(exist_ok=True)
+        return d / "procesados_mcp.json"
+    return ruta("data/procesados.json")
 
 
 def _procesados() -> set[str]:
-    return set(json.loads(PROCESADOS.read_text())) if PROCESADOS.exists() else set()
+    p = _ruta_procesados()
+    return set(json.loads(p.read_text())) if p.exists() else set()
+
+
+def _guardar_procesados(ids: set[str]) -> None:
+    _ruta_procesados().write_text(json.dumps(sorted(ids)))
+
+
+def _propio_o_automatico(c: dict) -> bool:
+    """Correos que el conserje NUNCA contesta: avisos automáticos (noreply...), sus propios avisos de escalado
+    (asunto "[Conserje IA]") y lo que envía el administrador. Evita que se conteste a sí mismo en bucle."""
+    de = (c.get("de") or "").lower()
+    ignorar = [x.lower() for x in cfg()["comunidad"].get("remitentes_ignorados", [])]
+    return (any(x in de for x in ignorar)
+            or "[conserje ia]" in (c.get("asunto") or "").lower()
+            or de == cfg()["comunidad"]["correo_administrador"].lower())
 
 
 def procesar_bandeja(maximo: int = 20) -> list[dict]:
@@ -170,20 +193,17 @@ def procesar_bandeja(maximo: int = 20) -> list[dict]:
             return [{"error": f"No se pudo leer la bandeja: {e}"}]
         t.cerrar()
     hechos = _procesados()
-    ignorar = [x.lower() for x in cfg()["comunidad"].get("remitentes_ignorados", [])]
-    def automatico(c: dict) -> bool:
-        return any(x in (c.get("de") or "").lower() for x in ignorar)
     resultados = []
-    for c in [c for c in correos if c["id"] not in hechos and automatico(c)]:
-        hechos.add(c["id"])                       # los automáticos se marcan como vistos y no se contestan
-    PROCESADOS.write_text(json.dumps(sorted(hechos)))
+    for c in [c for c in correos if c["id"] not in hechos and _propio_o_automatico(c)]:
+        hechos.add(c["id"])                       # se marcan como vistos y no se contestan
+    _guardar_procesados(hechos)
     for c in [c for c in correos if c["id"] not in hechos][:maximo]:
         with traza.sesion("correo") as t:
             rem = {"email": c["de"], "nombre": c.get("nombre", ""), "vivienda": router._vivienda(c.get("nombre", ""))}
             r = procesar(c["cuerpo"], rem, canal="correo", responder_por_correo=True, en_respuesta_a=c)
             s = t.cerrar()
         hechos.add(c["id"])
-        PROCESADOS.write_text(json.dumps(sorted(hechos)))
+        _guardar_procesados(hechos)
         resultados.append({"correo": {k: c[k] for k in ("id", "de", "nombre", "asunto")}, **r,
                            "traza": {k: s[k] for k in ("sesion", "tokens_in", "tokens_out", "duracion_ms", "llamadas_llm", "herramientas", "fallos")}})
     return resultados
