@@ -45,7 +45,10 @@ class BackendMCP:
         async with self._lock:
             if nombre not in self.sesiones:
                 s = self.c["servidores"][nombre]
-                env = {**os.environ, **{k: expandir(v) for k, v in s.get("env", {}).items()}}
+                # las variables vacías no se pasan: así el servidor usa sus valores por defecto
+                # (p. ej. ms-365-mcp-server trae su propio registro de app si no hay MS365_MCP_CLIENT_ID)
+                extra = {k: expandir(v) for k, v in s.get("env", {}).items()}
+                env = {**os.environ, **{k: v for k, v in extra.items() if v}}
                 params = StdioServerParameters(command=s["comando"], args=s["args"], env=env)
                 lectura, escritura = await self.pila.enter_async_context(stdio_client(params))
                 sesion = await self.pila.enter_async_context(ClientSession(lectura, escritura))
