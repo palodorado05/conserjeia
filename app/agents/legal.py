@@ -63,6 +63,7 @@ def responder(pregunta: str) -> dict:
     inventadas = [c for c in re.findall(r"\[(.+?LPH)\]", texto) if c not in permitidas]
     for c in inventadas:           # una cita que no viene de los fragmentos se elimina del texto
         texto = texto.replace(f"[{c}]", "")
+    citas = list(dict.fromkeys(citas))          # sin duplicados, en orden
     if not d.get("consta", False) or not texto or not citas:
         return {**base, "abstiene": True, "motivo": "el modelo indica que los fragmentos no responden",
                 "texto": ABSTENCION, "citas": [], "modo": "modelo"}

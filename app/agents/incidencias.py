@@ -43,7 +43,8 @@ def _ficha(router: dict, mensaje: str) -> dict:
     return {"titulo": str(d.get("titulo") or router["resumen"])[:80],
             "descripcion": str(d.get("descripcion") or router["resumen"])[:400],
             "requiere_tecnico": bool(d.get("requiere_tecnico", tec != "ninguno")),
-            "tipo_tecnico": str(d.get("tipo_tecnico") or tec)}
+            # el tipo de técnico lo fija la CATEGORÍA (código); el LLM sólo lo propone si la categoría no lo determina
+            "tipo_tecnico": tec if tec != "ninguno" else str(d.get("tipo_tecnico") or "ninguno")}
 
 
 def _duplicada(abiertas: list[dict], router: dict) -> dict | None:
