@@ -45,6 +45,5 @@ echo "[5/6] Construyendo el índice de la Ley de Propiedad Horizontal..."
 python -m app.rag.indice --construir
 
 # ---- 6. Arrancar y abrir el navegador ----
-echo "[6/6] Abriendo http://localhost:8000 ..."
-(sleep 3; open http://localhost:8000) &
+echo "[6/6] Arrancando el conserje (se abrirá solo en el navegador)..."
 python -m app
