@@ -33,6 +33,7 @@ def expandir(valor: str) -> str:
 @lru_cache(maxsize=1)
 def cfg() -> dict:
     _cargar_env()
+    os.environ.setdefault("RAIZ", str(RAIZ))    # permite ${RAIZ} en config.yaml (rutas absolutas)
     with open(RAIZ / "config.yaml", encoding="utf-8") as f:
         c = yaml.safe_load(f)
     # Permite cambiar el modo sin tocar el fichero: MODO_PLATAFORMAS=mcp python -m app

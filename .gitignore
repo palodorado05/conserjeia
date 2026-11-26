@@ -7,3 +7,4 @@ data/mock/estado.json
 data/procesados.json
 data/indice/
 .DS_Store
+data/google_oauth.json

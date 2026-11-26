@@ -74,8 +74,12 @@ if errorlevel 1 (
 
 REM ---- 5. Google Calendar: iniciar sesion ----
 echo.
-echo [5/6] Google Calendar: se abrira el navegador si hace falta dar permiso...
-python -m app.tools.mcp_backend --google
+echo [5/6] Google Calendar: se abrira el navegador. Entra con el Gmail del conserje y pulsa Continuar/Permitir.
+echo        Si sale "Google no ha verificado esta aplicacion": pulsa Continuar.
+python -m app.tools.preparar_google
+if errorlevel 1 ( pause & exit /b 1 )
+set "GOOGLE_OAUTH_CREDENTIALS=%CD%\data\google_oauth.json"
+call npx -y @cocal/google-calendar-mcp auth
 
 REM ---- 6. Comprobacion final ----
 echo.

@@ -6,7 +6,7 @@ esto: la pasarela app/tools/plataformas.py llama a `ejecutar("notion.escribir", 
 al nombre y los argumentos REALES de cada servidor.
 
 Puesta en marcha (ver README, "Modo MCP"):
-  1. python -m app.tools.mcp_backend --listar    -> lista las herramientas reales de cada servidor
+  1. python -m app.tools.mcp_backend --listar --comprobar  -> herramientas reales y nombres de config.yaml
   2. corregid los nombres en config.yaml -> mcp.herramientas
   3. revisad los TODO de este fichero (forma exacta de los argumentos / del resultado)
   4. python -m app.tools.mcp_backend --probar    -> llama a las 6 herramientas lógicas una vez
@@ -112,29 +112,26 @@ class BackendMCP:
             "saveToSentItems": True}})
         return {"id": f"graph-{datetime.now():%H%M%S}"}
 
-    # --- Google Calendar (workspace-mcp) ---------------------------------------
+    # --- Google Calendar (@cocal/google-calendar-mcp) -------------------------
+    # list-events devuelve JSON {"events": [{"id", "summary", "start": {"dateTime"}, "end": {...}}]}
+    # create-event devuelve JSON {"event": {"id", ...}}. Las horas van sin zona y se indica timeZone.
     def calendario_leer(self, desde, hasta):
+        zona_txt = cfg()["comunidad"]["zona_horaria"]
         r = self.llamar_crudo("calendario.leer", {
-            "user_google_email": expandir(self.c["google_email"]), "calendar_id": "primary",
-            "time_min": _rfc3339(desde), "time_max": _rfc3339(hasta), "max_results": 50})
-        if isinstance(r, dict):              # si alguna versión devuelve JSON
-            items = r.get("items", r.get("events", []))
-            return [{"id": e.get("id", ""), "titulo": e.get("summary", ""),
-                     "inicio": e.get("start", {}).get("dateTime", "")[:16], "fin": e.get("end", {}).get("dateTime", "")[:16]}
-                    for e in items]
-        # TODO: workspace-mcp devuelve texto; ajustad la expresión si vuestra versión cambia el formato
-        eventos = []
-        for m in re.finditer(r'"(?P<t>[^"]+)"\s*\(Starts?:\s*(?P<i>[\dT:\-+]+),\s*Ends?:\s*(?P<f>[\dT:\-+]+)\)(?:\s*ID:\s*(?P<id>\S+))?', str(r)):
-            eventos.append({"id": m["id"] or "", "titulo": m["t"], "inicio": m["i"][:16], "fin": m["f"][:16]})
-        return eventos
+            "calendarId": "primary", "timeMin": _local(desde), "timeMax": _local(hasta), "timeZone": zona_txt})
+        items = r.get("events", r.get("items", [])) if isinstance(r, dict) else []
+        def hora(x):
+            x = x or {}
+            return (x.get("dateTime") or x.get("date") or "")[:16]
+        return [{"id": e.get("id", ""), "titulo": e.get("summary", "") or "", "inicio": hora(e.get("start")),
+                 "fin": hora(e.get("end")), "descripcion": e.get("description", "") or ""} for e in items]
 
     def calendario_escribir(self, titulo, inicio, fin, descripcion=""):
         r = self.llamar_crudo("calendario.escribir", {
-            "user_google_email": expandir(self.c["google_email"]), "calendar_id": "primary",
-            "summary": titulo, "start_time": _rfc3339(inicio), "end_time": _rfc3339(fin),
-            "description": descripcion, "timezone": cfg()["comunidad"]["zona_horaria"]})
-        m = re.search(r"(?:ID|id)[:\s\"]+([\w\-]+)", str(r))
-        return {"id": m.group(1) if m else "gcal"}
+            "calendarId": "primary", "summary": titulo, "description": descripcion,
+            "start": _local(inicio), "end": _local(fin), "timeZone": cfg()["comunidad"]["zona_horaria"]})
+        ev = r.get("event", r) if isinstance(r, dict) else {}
+        return {"id": ev.get("id", "gcal") if isinstance(ev, dict) else "gcal"}
 
     # --- Notion (@notionhq/notion-mcp-server) ----------------------------------
     # Base de datos "Incidencias" con propiedades: Nombre (título), Categoría (select), Prioridad (select),
@@ -185,6 +182,11 @@ def _sin_html(s: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", s)).strip()
 
 
+def _local(iso: str) -> str:
+    """'2026-11-27T10:00' -> '2026-11-27T10:00:00' (hora local, sin zona: la zona va en timeZone)."""
+    return datetime.fromisoformat(iso).replace(tzinfo=None).isoformat(timespec="seconds")
+
+
 def _rfc3339(iso_local: str) -> str:
     d = datetime.fromisoformat(iso_local)
     if d.tzinfo is None:
@@ -215,7 +217,6 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--listar", action="store_true", help="lista las herramientas reales de cada servidor")
     ap.add_argument("--comprobar", action="store_true", help="comprueba que los nombres de config.yaml existen")
-    ap.add_argument("--google", action="store_true", help="inicia sesión en Google Calendar (abre el navegador)")
     ap.add_argument("--probar", action="store_true", help="llama una vez a cada herramienta lógica de lectura")
     a = ap.parse_args()
     b = BackendMCP()
@@ -242,25 +243,6 @@ if __name__ == "__main__":
                 print(f"OK  {logica:20s} -> {h['nombre']}")
             else:
                 print(f"NO  {logica:20s} -> {h['nombre']}  ¿quizá? {difflib.get_close_matches(h['nombre'], nombres, n=3, cutoff=0.3)}")
-
-    if a.google:
-        import webbrowser
-        for intento in range(3):
-            try:
-                b.ejecutar("calendario.leer", leer_cal)
-                print("OK  Google Calendar conectado.")
-                break
-            except Exception as e:
-                texto = str(e)
-                enlaces = re.findall(r"https://accounts\.google\.com/[^\s\)\]\"'<>*]+", texto)
-                if not enlaces:
-                    print(f"ERR Google: {texto[:600]}")
-                    break
-                print("\nSe abre el navegador: entra con la cuenta de Gmail del conserje y pulsa Permitir/Continuar.")
-                print("Si sale 'Google no ha verificado esta app': Configuracion avanzada -> Ir a Conserje IA.")
-                print(f"(si no se abre solo, copia este enlace en el navegador)\n{enlaces[0]}\n")
-                webbrowser.open(enlaces[0])
-                input("Cuando el navegador diga que ya esta autorizado, vuelve aqui y pulsa Enter... ")
 
     if a.probar:
         pruebas = [("correo.leer", {}), ("notion.leer", {}), ("calendario.leer", leer_cal)]

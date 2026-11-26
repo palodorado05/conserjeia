@@ -71,16 +71,12 @@ mcp:
       args: ["-y", "@softeria/ms-365-mcp-server"]
       env:
         MS365_MCP_CLIENT_ID: "${MS365_MCP_CLIENT_ID}"
-    google:                       # Google Calendar (cuenta conserje.demo@gmail.com)
-      comando: "uvx"
-      args: ["workspace-mcp", "--tools", "calendar"]
+    google:                       # Google Calendar (cuenta conserje.demo@gmail.com) — @cocal/google-calendar-mcp
+      comando: "npx"
+      args: ["-y", "@cocal/google-calendar-mcp"]
       env:
-        GOOGLE_OAUTH_CLIENT_ID: "${GOOGLE_OAUTH_CLIENT_ID}"
-        GOOGLE_OAUTH_CLIENT_SECRET: "${GOOGLE_OAUTH_CLIENT_SECRET}"
-        OAUTHLIB_INSECURE_TRANSPORT: "1"
-        # puerto del "retorno" de Google tras aceptar permisos. No usamos el 8000 por defecto porque
-        # en muchos portátiles ya lo ocupa otro programa (y es el de la propia app web).
-        WORKSPACE_MCP_PORT: "8766"
+        # fichero con el ID y el secreto de cliente OAuth; lo genera app/tools/preparar_google.py desde .env
+        GOOGLE_OAUTH_CREDENTIALS: "${RAIZ}/data/google_oauth.json"
     notion:                       # Notion (base de datos "Incidencias")
       comando: "npx"
       args: ["-y", "@notionhq/notion-mcp-server"]
@@ -92,11 +88,10 @@ mcp:
   herramientas:
     correo.leer:         {servidor: outlook, nombre: "list-mail-messages"}
     correo.escribir:     {servidor: outlook, nombre: "send-mail"}
-    calendario.leer:     {servidor: google,  nombre: "get_events"}
-    calendario.escribir: {servidor: google,  nombre: "create_event"}
+    calendario.leer:     {servidor: google,  nombre: "list-events"}
+    calendario.escribir: {servidor: google,  nombre: "create-event"}
     notion.leer:         {servidor: notion,  nombre: "API-query-data-source"}
     notion.escribir:     {servidor: notion,  nombre: "API-post-page"}
 
   # Identificadores de vuestras cuentas/bases (no son secretos, pero tampoco van al repo si no queréis)
-  google_email: "${GOOGLE_USER_EMAIL}"          # conserje.demo@gmail.com
   notion_data_source_id: "${NOTION_DATA_SOURCE_ID}"   # id de la base "Incidencias"

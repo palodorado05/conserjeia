@@ -136,7 +136,7 @@ sea independiente.
 | Plataforma | Servidor MCP | Lectura | Escritura | Cuenta de prueba |
 |---|---|---|---|---|
 | Microsoft Outlook | `@softeria/ms-365-mcp-server` | `correo.leer` → bandeja | `correo.escribir` → respuestas y avisos al admin | `conserje.demo@outlook.com` |
-| Google Calendar | `workspace-mcp` | `calendario.leer` → huecos ocupados | `calendario.escribir` → visita del técnico | `conserje.demo@gmail.com` |
+| Google Calendar | `@cocal/google-calendar-mcp` | `calendario.leer` → huecos ocupados | `calendario.escribir` → visita del técnico | `conserje.demo@gmail.com` |
 | Notion | `@notionhq/notion-mcp-server` | `notion.leer` → incidencias abiertas | `notion.escribir` → nueva incidencia | base de datos "Incidencias" |
 
 Todas las llamadas pasan por una pasarela única, `app/tools/plataformas.py`, que:
@@ -147,6 +147,9 @@ Todas las llamadas pasan por una pasarela única, `app/tools/plataformas.py`, qu
 4. lo deja en la **traza**.
 
 ### Modo MCP (las cuentas reales)
+
+**En Windows hay un asistente de doble clic: `CONECTAR_PLATAFORMAS_WINDOWS.bat`.** Crea el `.env`, la base
+de Notion, inicia sesión en Outlook y Google, y comprueba las tres plataformas. A mano:
 
 1. Copiad `.env.example` a `.env` y rellenad los identificadores. `.env` nunca se sube al repo.
 2. Notion: cread la base **Incidencias** con estas propiedades y compartidla con la integración:
