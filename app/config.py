@@ -45,3 +45,14 @@ def cfg() -> dict:
 
 def ruta(rel: str) -> Path:
     return RAIZ / rel
+
+
+def zona():
+    """Zona horaria de la comunidad. En Windows hace falta el paquete `tzdata` (está en requirements.txt);
+    si aun así no está, se usa la hora local del ordenador en vez de romper la app."""
+    from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+    try:
+        return ZoneInfo(cfg()["comunidad"]["zona_horaria"])
+    except ZoneInfoNotFoundError:
+        from datetime import datetime
+        return datetime.now().astimezone().tzinfo

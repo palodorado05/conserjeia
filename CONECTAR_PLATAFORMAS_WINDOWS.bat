@@ -35,6 +35,7 @@ if not exist .venv (
     python -m app.rag.indice --construir
 ) else (
     call .venv\Scripts\activate.bat
+    python -m pip install -q -r requirements.txt
 )
 echo [2/6] Python listo.
 

@@ -26,7 +26,7 @@ import threading
 from contextlib import AsyncExitStack
 from datetime import datetime
 
-from ..config import cfg, expandir
+from ..config import cfg, expandir, zona
 
 
 class BackendMCP:
@@ -169,10 +169,9 @@ def _sin_html(s: str) -> str:
 
 
 def _rfc3339(iso_local: str) -> str:
-    from zoneinfo import ZoneInfo
     d = datetime.fromisoformat(iso_local)
     if d.tzinfo is None:
-        d = d.replace(tzinfo=ZoneInfo(cfg()["comunidad"]["zona_horaria"]))
+        d = d.replace(tzinfo=zona())
     return d.isoformat()
 
 

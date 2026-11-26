@@ -12,10 +12,9 @@ Si una plataforma falla, no se para: devuelve lo que ha podido hacer y los error
 from __future__ import annotations
 
 from datetime import datetime, timedelta
-from zoneinfo import ZoneInfo
 
 from .. import guardrails, llm
-from ..config import cfg
+from ..config import cfg, zona
 from ..tools import plataformas as P
 
 SISTEMA = f"""Eres el gestor de incidencias de una comunidad de propietarios.
@@ -56,7 +55,7 @@ def _duplicada(abiertas: list[dict], router: dict) -> dict | None:
 
 def _primer_hueco(eventos: list[dict], urgente: bool) -> tuple[str, str]:
     h = cfg()["comunidad"]["horario_tecnicos"]
-    tz = ZoneInfo(cfg()["comunidad"]["zona_horaria"])
+    tz = zona()
     ahora = datetime.now(tz).replace(tzinfo=None, second=0, microsecond=0)
     dia = ahora.date() if urgente else ahora.date() + timedelta(days=1)
     ocupados = [(e["inicio"][:16], e["fin"][:16]) for e in eventos]
@@ -123,7 +122,7 @@ def gestionar(router: dict, mensaje: str) -> dict:
     # 4. agendar al técnico (Google Calendar)
     if ficha["requiere_tecnico"] and ficha["tipo_tecnico"] != "ninguno":
         try:
-            tz = ZoneInfo(cfg()["comunidad"]["zona_horaria"])
+            tz = zona()
             hoy = datetime.now(tz).replace(tzinfo=None)
             eventos = P.llamar("incidencias", "calendario.leer", desde=hoy.isoformat(timespec="minutes"),
                                hasta=(hoy + timedelta(days=cfg()["comunidad"]["horario_tecnicos"]["dias_busqueda"] + 3)).isoformat(timespec="minutes"))
