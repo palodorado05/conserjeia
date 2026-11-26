@@ -49,7 +49,7 @@ class BackendMCP:
                 # (p. ej. ms-365-mcp-server trae su propio registro de app si no hay MS365_MCP_CLIENT_ID)
                 extra = {k: expandir(v) for k, v in s.get("env", {}).items()}
                 env = {**os.environ, **{k: v for k, v in extra.items() if v}}
-                params = StdioServerParameters(command=s["comando"], args=s["args"], env=env)
+                params = StdioServerParameters(command=_ejecutable(s["comando"]), args=s["args"], env=env)
                 lectura, escritura = await self.pila.enter_async_context(stdio_client(params))
                 sesion = await self.pila.enter_async_context(ClientSession(lectura, escritura))
                 await asyncio.wait_for(sesion.initialize(), timeout=60)
@@ -60,7 +60,10 @@ class BackendMCP:
         s = await self._sesion(servidor)
         r = await asyncio.wait_for(s.call_tool(herramienta, args), timeout=60)
         textos = [c.text for c in r.content if getattr(c, "type", "") == "text"]
-        if r.isError:
+        es_error = getattr(r, "is_error", None)          # mcp >= 2.0
+        if es_error is None:
+            es_error = getattr(r, "isError", False)      # mcp 1.x
+        if es_error:
             raise RuntimeError(" ".join(textos)[:300] or "error del servidor MCP")
         texto = "\n".join(textos)
         try:
@@ -164,6 +167,20 @@ class BackendMCP:
 
 
 # ---------------------------------------------------------------------- utilidades
+def _ejecutable(nombre: str) -> str:
+    """Ruta completa de npx/uvx. En Windows, justo después de instalarlos con winget, aún no están en el PATH."""
+    import shutil
+    encontrado = shutil.which(nombre)
+    if encontrado:
+        return encontrado
+    casa = os.path.expanduser("~")
+    candidatos = [os.path.join(casa, ".local", "bin", nombre + ".exe"),
+                  os.path.join(os.environ.get("LOCALAPPDATA", ""), "Microsoft", "WinGet", "Links", nombre + ".exe"),
+                  os.path.join(os.environ.get("ProgramFiles", ""), "nodejs", nombre + ".cmd"),
+                  os.path.join(casa, ".cargo", "bin", nombre + ".exe")]
+    return next((c for c in candidatos if os.path.exists(c)), nombre)
+
+
 def _sin_html(s: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", s)).strip()
 
@@ -190,6 +207,11 @@ def _sel(p) -> str:
 
 
 if __name__ == "__main__":
+    import sys
+    try:                                   # la consola de Windows (cp1252) no imprime emojis de las descripciones
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
     ap = argparse.ArgumentParser()
     ap.add_argument("--listar", action="store_true", help="lista las herramientas reales de cada servidor")
     ap.add_argument("--probar", action="store_true", help="llama una vez a cada herramienta lógica")

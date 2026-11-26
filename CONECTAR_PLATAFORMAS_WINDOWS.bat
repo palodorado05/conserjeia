@@ -5,6 +5,8 @@ REM  Antes: tener el fichero .env con las llaves (ver README, seccion 4).
 REM ==========================================================================
 setlocal
 cd /d "%~dp0"
+set PYTHONUTF8=1
+chcp 65001 >nul
 echo.
 echo  === Conserje IA: conectar las 3 plataformas ===
 echo.
